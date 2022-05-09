@@ -1,3 +1,27 @@
+var o = null;
+var g = null;
+
+
+var isRecognition = false;
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var rec = new SpeechRecognition();
+rec.lang = 'en-US';
+
+rec.addEventListener("result", function(e) {
+  var text = "";
+    text = Array.from(e.results)
+    .map(result => result[0])
+    .map(result => result.transcript)
+    .join('');
+  Keyboard.properties.value = Keyboard.properties.value.toString().splice(Keyboard.properties.curentCursor, 0, text);
+  Keyboard.properties.curentCursor += text.length;
+  Keyboard._triggerEvent("oninput");
+  var elem = document.getElementById("myTextArea");
+  elem.selectionStart = Keyboard.properties.curentCursor;
+  elem.selectionEnd = Keyboard.properties.curentCursor;
+  elem.focus();
+});
+
 const Keyboard = {
     keyLayoutEng: [
       "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "backspace",
@@ -245,6 +269,66 @@ const Keyboard = {
         });
     
         return fragment;
+      },
+      triggerEvent(handlerName) {
+        if (typeof this.eventHandlers[handlerName] == "function") {
+          this.eventHandlers[handlerName](this.properties.value);
+        }
+      },
+    
+      _toggleCapsLock() {
+        this.properties.capsLock = !this.properties.capsLock;
+        this._changeSymbols();
+      },
+      _toggleShift(){
+        this.properties.shift = !this.properties.shift;
+        this._changeSymbols();
+      },
+      _toggleLanguage(){
+        this._changeSymbols();
+      },
+
+      changeSymbols(){
+        var keysMain = this.keyLayoutEng;
+        if(this.properties.shift && this.properties.english) {
+          keysMain = this.keyShiftEng;
+        }
+        if(this.properties.shift && !this.properties.english) {
+          keysMain = this.keyShiftRus;
+        }
+        if(!this.properties.shift && !this.properties.english) {
+          keysMain = this.keyLayoutRus;
+        }
+        let i = 0;
+        for (const key of this.elements.keys) {
+          if (keysMain[i]!="backspace"
+            && keysMain[i]!="space"
+            && keysMain[i]!="enter"
+            && keysMain[i]!="done"
+            && keysMain[i]!="caps"
+            && keysMain[i]!="language"
+            && keysMain[i]!="<" &&  keysMain[i]!=">"
+            && keysMain[i]!="voice") {
+            key.textContent = keysMain[i];
+            if(keysMain[i]!="shift" && keysMain[i]!="caps" && key.childElementCount === 0 && this.properties.shift && this.properties.capsLock){
+              key.textContent = key.textContent.toLowerCase();
+            }
+            if(keysMain[i]!="shift" && keysMain[i]!="caps" && key.childElementCount === 0 && !this.properties.shift && this.properties.capsLock){
+              key.textContent = key.textContent.toUpperCase();
+            }
+            if(keysMain[i]!="shift" && keysMain[i]!="caps" && key.childElementCount === 0 && this.properties.shift && !this.properties.capsLock){
+              key.textContent = key.textContent.toUpperCase();
+            }
+            if(keysMain[i]!="shift" && keysMain[i]!="caps" && key.childElementCount === 0 && !this.properties.shift && !this.properties.capsLock){
+              key.textContent = key.textContent.toLowerCase();
+            }
+          }
+          if(keysMain[i]=="language" && this.properties.english){
+            key.textContent = "en";
+          } else if(keysMain[i]=="language") key.textContent = "ru";
+    
+          i++;
+        }    
       },
 }
 
