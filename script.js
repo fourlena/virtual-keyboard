@@ -436,3 +436,49 @@ document.onkeydown = function(e){
       Keyboard.properties.curentCursor = document.getElementById("myTextArea").selectionStart+1;
     }
   }
+
+  function press(e){
+    for(let i=0; i<lastKeys.length; i++) {
+      if(lastKeys[i] == "shift" && lastKeys.length > 1){
+        Keyboard._toggleShift();
+        let key = document.getElementById("shift");
+        key.classList.remove("keyboard__key--lighting");
+      } else {
+          for (const key of Keyboard.elements.keys) {
+              if(key.textContent === lastKeys[i]){
+                key.classList.remove("keyboard__key--lighting");
+            }
+          }
+       }
+    }
+    lastKeys = [];
+    if(e.charCode == 13){
+      //enter
+      let key = document.getElementById("enter");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push(key.textContent);
+    }
+    if(e.keyCode == 8){
+      //enter
+      let key = document.getElementById("back");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push(key.textContent);
+    }
+    else if(e.charCode == 32){
+      //space
+      let key = document.getElementById("space");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push(key.textContent);
+    }
+    else {
+      var res = String.fromCharCode(e.charCode);
+      for (const key of Keyboard.elements.keys) {
+        if(key.textContent === res){
+          key.classList.add("keyboard__key--lighting");
+          lastKeys.push(key.textContent);
+          Keyboard.properties.value = Keyboard.properties.value.toString().splice(Keyboard.properties.curentCursor, 0, key.textContent);
+          Keyboard.properties.curentCursor = document.getElementById("myTextArea").selectionStart;
+        }
+      }
+    }
+  }
