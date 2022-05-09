@@ -85,3 +85,26 @@
     background: #e290e4;
     color: #004134;
   }
+
+  @media (max-width: 770px){
+    .keyboard__key--wide {
+      width: 8%;
+    }
+    
+    .keyboard__key--extra-wide {
+      width: 26%;
+      max-width: 350px;
+    }
+  
+    .keyboard__key {
+      font-size: 14px;
+    }
+  
+    .keyboard__key--activatable::after {
+      top: 35px;
+      right: 5px;
+      position: absolute;
+      width: 6px;
+      height: 6px;
+    }
+  }
