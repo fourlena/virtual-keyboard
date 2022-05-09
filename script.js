@@ -362,6 +362,77 @@ window.addEventListener("DOMContentLoaded", function () {
     Keyboard.init();
 });
 
-String.prototype.splice = function(start, delCount, newSubStr) {
+String.prototype.splice = function (start, delCount, newSubStr) {
     return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
-  };
+};
+
+let lastKeys = []
+
+document.onkeydown = function(e){
+    for(let i=0; i<lastKeys.length; i++) {
+      if(lastKeys[i] == "caps"){
+        let key = document.getElementById("caps");
+        key.classList.remove("keyboard__key--lighting");
+      }
+      else if(lastKeys[i] == "shift" && lastKeys.length > 1){
+        Keyboard._toggleShift();
+        let key = document.getElementById("shift");
+        key.classList.remove("keyboard__key--lighting");
+      } else {
+          for (const key of Keyboard.elements.keys) {
+              if(key.textContent === lastKeys[i]){
+                key.classList.remove("keyboard__key--lighting");
+            }
+          }
+        }
+    }
+    lastKeys = [];
+    if(e.keyCode == 8){
+      //back
+      let key = document.getElementById("back");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push(key.textContent);
+    }
+    if(e.keyCode == 20){
+      //caps
+     Keyboard._toggleCapsLock();
+      let key = document.getElementById("caps");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push("caps");
+    }
+    if(e.keyCode == 16){
+      //shift
+      Keyboard._toggleShift();
+      let key = document.getElementById("shift");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push("shift");
+    }
+    if(e.keyCode == 188){
+      //<
+      let key = document.getElementById("<");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push(key.textContent);
+      Keyboard.properties.curentCursor = document.getElementById("myTextArea").selectionStart-1;
+    }
+    if(e.keyCode == 190){
+      //>
+      let key = document.getElementById(">");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push(key.textContent);
+      Keyboard.properties.curentCursor = document.getElementById("myTextArea").selectionStart+1;
+    }
+    if(e.keyCode == 37){
+      //<
+      let key = document.getElementById("<");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push(key.textContent);
+      Keyboard.properties.curentCursor = document.getElementById("myTextArea").selectionStart-1;
+    }
+    if(e.keyCode == 39){
+      //>
+      let key = document.getElementById(">");
+      key.classList.add("keyboard__key--lighting");
+      lastKeys.push(key.textContent);
+      Keyboard.properties.curentCursor = document.getElementById("myTextArea").selectionStart+1;
+    }
+  }
